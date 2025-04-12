@@ -1,35 +1,21 @@
-import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 
-const MediaRow = ({item, setSelectedItem}) => {
+const MediaRow = ({item}) => {
   return (
     <tr>
       <td>
-        <img src={item.thumbnail} alt={item.title} />
+        <img src={item.thumbnail} alt={item.title} width="100" />
       </td>
       <td>{item.title}</td>
       <td>{item.description}</td>
-      <td>{new Date(item.created_at).toLocaleString('fi-FI')}</td>
+      <td>{new Date(item.created_at).toLocaleDateString('fi-FI')}</td>
       <td>{item.filesize}</td>
       <td>{item.media_type}</td>
       <td>
-        <button onClick={() => setSelectedItem(item)}>View</button>
+        <Link to="/single" state={{item}}>Show</Link>
       </td>
     </tr>
   );
-};
-
-MediaRow.propTypes = {
-  item: PropTypes.shape({
-    media_id: PropTypes.number.isRequired,
-    thumbnail: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    created_at: PropTypes.string.isRequired,
-    filesize: PropTypes.number.isRequired,
-    media_type: PropTypes.string.isRequired,
-    filename: PropTypes.string.isRequired,
-  }).isRequired,
-  setSelectedItem: PropTypes.func.isRequired,
 };
 
 export default MediaRow;
