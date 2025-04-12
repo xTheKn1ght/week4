@@ -1,24 +1,27 @@
-const SingleView = ({item, setSelectedItem}) => {
-  if (!item) return null;
+import { useLocation } from 'react-router-dom';
 
-  const handleClose = () => setSelectedItem(null);
+const SingleView = () => {
+  const { state } = useLocation(); // Get the state passed from the Link component
+  const item = state.item; // Access the media item
 
   return (
-    <dialog open className="single-view">
-      <h2>{item.title}</h2>
-      <p>{item.description || 'No description provided.'}</p>
+    <div>
+      <h1>{item.title}</h1>
+      <p>{item.description}</p>
+      <p><strong>Owner:</strong> {item.username}</p>
+
+      {/* Conditionally render based on media type */}
       {item.media_type.startsWith('image') ? (
         <img src={item.filename} alt={item.title} />
       ) : item.media_type.startsWith('video') ? (
         <video controls>
           <source src={item.filename} type={item.media_type} />
-          Your browser does not support the video tag.
         </video>
-      ) : (
-        <p>Unsupported media type</p>
-      )}
-      <button onClick={handleClose}>Close</button>
-    </dialog>
+      ) : null}
+
+      {/* Add a back button to return to the previous page */}
+      <button onClick={() => window.history.back()}>Go back</button>
+    </div>
   );
 };
 
