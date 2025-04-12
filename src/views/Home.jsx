@@ -1,53 +1,34 @@
-import {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import MediaRow from '../components/MediaRow';
 import SingleView from '../components/SingleView';
 import '../App.css';
 import '../index.css';
 
-const mediaArray = [
-  {
-    media_id: 8,
-    user_id: 5,
-    filename: 'https://place-hold.it/1200x800.jpg&text=Pic1&fontsize=120',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb2&fontsize=20',
-    filesize: 170469,
-    media_type: 'image/jpeg',
-    title: 'Picture 1',
-    description: 'This is a placeholder picture.',
-    created_at: '2024-01-07T20:49:34.000Z',
-  },
-  {
-    media_id: 9,
-    user_id: 7,
-    filename: 'https://place-hold.it/800x600.jpg&text=Pic2&fontsize=72',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb3&fontsize=20',
-    filesize: 1002912,
-    media_type: 'image/jpeg',
-    title: 'Pic 2',
-    description: '',
-    created_at: '2024-01-07T21:32:27.000Z',
-  },
-  {
-    media_id: 17,
-    user_id: 2,
-    filename:
-      'http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4',
-    thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb1&fontsize=20',
-    filesize: 1236616,
-    media_type: 'video/mp4',
-    title: 'Bunny',
-    description: 'Butterflies fly around the bunny.',
-    created_at: '2024-01-07T20:48:13.000Z',
-  },
-];
-
 const Home = () => {
-  const [selectedItem, setSelectedItem] = useState(null);
+  // Initialize state with an empty array
+  const [mediaArray, setMediaArray] = useState([]);
+
+  // Function to fetch the media data from the JSON file
+  const getMedia = async () => {
+    try {
+      const response = await fetch('test.json'); // Fetch the JSON file
+      const json = await response.json(); // Parse the JSON data
+      setMediaArray(json); // Update the state with the fetched data
+    } catch (error) {
+      console.error('Error fetching media:', error); // Log errors if any
+    }
+  };
+
+  // Call getMedia once after the first render
+  useEffect(() => {
+    getMedia();
+  }, []); // Empty dependency array ensures the effect runs only once
+
+  console.log(mediaArray); // Log the mediaArray to the console
 
   return (
-    <>
+    <div>
       <h2>My Media</h2>
-      <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
       <table>
         <thead>
           <tr>
@@ -57,20 +38,25 @@ const Home = () => {
             <th>Created</th>
             <th>Size</th>
             <th>Type</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+          {/* Iterate over mediaArray to render each media item */}
           {mediaArray.map((item) => (
-            <MediaRow
-              key={item.media_id}
-              item={item}
-              setSelectedItem={setSelectedItem}
-            />
+            <tr key={item.media_id}>
+              <td>
+                <img src={item.thumbnail} alt={item.title} />
+              </td>
+              <td>{item.title}</td>
+              <td>{item.description}</td>
+              <td>{new Date(item.created_at).toLocaleDateString()}</td>
+              <td>{item.filesize}</td>
+              <td>{item.media_type}</td>
+            </tr>
           ))}
         </tbody>
       </table>
-    </>
+    </div>
   );
 };
 
