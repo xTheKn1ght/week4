@@ -1,3 +1,3 @@
 ## Published App
 
-Open [this link](https://users.metropolia.fi/~aaronly/wsk-routing/) to view the live version.
+Open [this link](https://users.metropolia.fi/~aaronly/custom-hooks/) to view the live version.
