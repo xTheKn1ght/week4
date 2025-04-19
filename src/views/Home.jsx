@@ -3,6 +3,7 @@ import MediaRow from '../components/MediaRow';
 import SingleView from '../components/SingleView';
 import '../App.css';
 import '../index.css';
+import { useMedia } from '../hooks/apiHooks';
 
 const mediaArray = [
   {
@@ -43,10 +44,10 @@ const mediaArray = [
 
 const Home = () => {
   const [selectedItem, setSelectedItem] = useState(null);
+  const { mediaArray } = useMedia();
 
   return (
     <>
-      <h2>My Media</h2>
       <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
       <table>
         <thead>
@@ -57,14 +58,14 @@ const Home = () => {
             <th>Created</th>
             <th>Size</th>
             <th>Type</th>
-            <th>Actions</th>
+            <th>Owner</th>
           </tr>
         </thead>
         <tbody>
-          {mediaArray.map((item) => (
+          {mediaArray.map((mediaItem) => (
             <MediaRow
-              key={item.media_id}
-              item={item}
+              key={mediaItem.media_id}
+              item={mediaItem}
               setSelectedItem={setSelectedItem}
             />
           ))}
