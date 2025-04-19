@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 
-const fetchData = async (url) => {
-  const response = await fetch(url);
+const fetchData = async (url, options = {}) => {
+  const response = await fetch(url, options);
   if (!response.ok) {
-    throw new Error('Failed to fetch data');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch data');
   }
   return response.json();
 };
+
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
@@ -41,4 +43,41 @@ const useMedia = () => {
   return { mediaArray };
 };
 
-export { useMedia };
+const useAuthentication = () => {
+  const postLogin = async (inputs) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(inputs),
+    };
+
+    return await fetchData(import.meta.env.VITE_AUTH_API + '/auth/login', options);
+  };
+
+  return { postLogin };
+};
+
+const useUser = () => {
+  const getUserByToken = async () => {
+    const token = localStorage.getItem('token');
+    const options = {
+      headers: { Authorization: 'Bearer ' + token },
+    };
+    return await fetchData(import.meta.env.VITE_AUTH_API + '/users/token', options);
+  };
+
+  const postUser = async (inputs) => {
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(inputs),
+    };
+    return await fetchData(import.meta.env.VITE_AUTH_API + '/users', options);
+  };
+
+  return { getUserByToken, postUser };
+};
+
+export { useMedia, useAuthentication, useUser };
