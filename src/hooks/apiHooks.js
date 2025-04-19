@@ -13,6 +13,25 @@ const fetchData = async (url, options = {}) => {
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
 
+  const postMedia = async (fileData, inputs, token) => {
+    const mediaInput = {
+      title: inputs.title,
+      description: inputs.description,
+      filename: fileData.filename,
+    };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify(mediaInput),
+    };
+    const response = await fetch(import.meta.env.VITE_API_URL + '/media', options);
+    const json = await response.json();
+    return json;
+  };
+
   const getMedia = async () => {
     try {
       const mediaData = await fetchData(import.meta.env.VITE_MEDIA_API + '/media');
@@ -40,7 +59,7 @@ const useMedia = () => {
     getMedia();
   }, []);
 
-  return { mediaArray };
+  return { mediaArray, postMedia };
 };
 
 const useAuthentication = () => {
@@ -80,4 +99,44 @@ const useUser = () => {
   return { getUserByToken, postUser };
 };
 
-export { useMedia, useAuthentication, useUser };
+const postFile = async (file, token) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const options = {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+    body: formData,
+  };
+  const response = await fetch(`${import.meta.env.VITE_UPLOAD_SERVER}/upload`, options);
+  const json = await response.json();
+  return json;
+};
+
+const useFile = () => {
+  const postFile = async (file, token) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      body: formData,
+    };
+
+    const response = await fetch(
+      import.meta.env.VITE_UPLOAD_SERVER + '/upload',
+      options
+    );
+    const json = await response.json();
+    return json;
+  };
+
+  return { postFile };
+};
+
+
+export { useMedia, useAuthentication, useUser, postFile, useFile };
